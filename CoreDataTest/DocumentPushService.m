@@ -7,18 +7,15 @@
 #import "Document.h"
 
 @interface DocumentPushService () <NSFetchedResultsControllerDelegate>
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @end
 
 @implementation DocumentPushService
 
-- (id) init {
+- (id) initWithManagedObjectContext:(NSManagedObjectContext *) managedObjectContext {
     if (self = [super init]) {
-        self.managedObjectContext = [NSManagedObjectContext MR_context];
-        [self.managedObjectContext MR_setWorkingName:@"ReportPushService MOC"];
-        [self.managedObjectContext MR_observeContext:[NSManagedObjectContext MR_defaultContext]];
-        
+        _managedObjectContext = managedObjectContext;
         self.fetchedResultsController = [Document MR_fetchAllSortedBy:@"timestamp"
                                                           ascending:NO
                                                       withPredicate:[NSPredicate predicateWithFormat:@"report.remoteId != nil && dirty == YES"]
@@ -53,7 +50,7 @@
 
 - (void) pushDocument:(Document *) document {
     __weak DocumentPushService *weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
         [NSThread sleepForTimeInterval:.5];  // simulate server
         document.remoteId = @"6789";
         document.dirty = [NSNumber numberWithBool:NO];

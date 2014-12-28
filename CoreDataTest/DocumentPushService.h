@@ -7,4 +7,6 @@
 
 @interface DocumentPushService : NSObject
 
+- (id) initWithManagedObjectContext:(NSManagedObjectContext *) managedObjectContext;
+
 @end

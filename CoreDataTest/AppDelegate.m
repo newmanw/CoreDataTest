@@ -8,7 +8,7 @@
 #import "Report.h"
 
 @interface AppDelegate ()
-
+@property (nonatomic, strong) NSManagedObjectContext *backgroundManagedObjectContext;
 @end
 
 @implementation AppDelegate
@@ -20,16 +20,16 @@
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"CoreDataTest.sqlite"];
     
     // cleaup database each time
-    NSManagedObjectContext *context = [NSManagedObjectContext MR_defaultContext];
-    [Document MR_truncateAllInContext:context];
-    [Report MR_truncateAllInContext:context];
-    [context MR_saveToPersistentStoreAndWait];
+    NSManagedObjectContext *defaultContext = [NSManagedObjectContext MR_defaultContext];
+    [Document MR_truncateAllInContext:defaultContext];
+    [Report MR_truncateAllInContext:defaultContext];
+    [defaultContext MR_saveToPersistentStoreAndWait];
     
-     self.reportPushService = [[ReportPushService alloc ] init];
-     self.documentPushService = [[DocumentPushService alloc] init];
+    self.backgroundManagedObjectContext = [NSManagedObjectContext MR_context];
+    [self.backgroundManagedObjectContext MR_observeContext:defaultContext];
+     self.reportPushService = [[ReportPushService alloc ] initWithManagedObjectContext:self.backgroundManagedObjectContext];
+     self.documentPushService = [[DocumentPushService alloc] initWithManagedObjectContext:self.backgroundManagedObjectContext];
     
-    NSLog(@"%@",[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory  inDomains:NSUserDomainMask] lastObject]);
-
     return YES;
 }
 

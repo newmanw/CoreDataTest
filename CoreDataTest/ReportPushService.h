@@ -7,4 +7,6 @@
 
 @interface ReportPushService : NSObject
 
+- (id) initWithManagedObjectContext:(NSManagedObjectContext *) managedObjectContext;
+
 @end
