@@ -5,6 +5,7 @@
 
 #import "ReportPushService.h"
 #import "Report.h"
+#import "Document.h"
 #import <AFNetworking/AFNetworking.h>
 
 @interface ReportPushService () <NSFetchedResultsControllerDelegate>
@@ -22,7 +23,7 @@
                                                       withPredicate:[NSPredicate predicateWithFormat:@"dirty == YES"]
                                                             groupBy:nil
                                                            delegate:self
-                                                          inContext:self.managedObjectContext];
+                                                          inContext:_managedObjectContext];
     }
     
     return self;
@@ -49,19 +50,21 @@
 
 - (void) pushReport:(Report *) report {
     __weak ReportPushService *weakSelf = self;
-    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:@"http://echo.jsontest.com/" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        report.remoteId = @"12345"; // fake id from server
-        report.dirty = [NSNumber numberWithBool:NO];
-        
-        [weakSelf.managedObjectContext MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
-            NSLog(@"Saved server info to Report");
+        [weakSelf.managedObjectContext performBlockAndWait:^{
+            report.remoteId = @"12345"; // fake id from server
+            report.dirty = [NSNumber numberWithBool:NO];
+            
+            [weakSelf.managedObjectContext MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+                NSLog(@"Saved server info to Report");
+            }];
         }];
      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
          NSLog(@"Error: %@", error);
      }];
     
+// This works, however block in AFNetworking above does not
 //    [self.managedObjectContext performBlock:^{
 //        report.remoteId = @"12345"; // fake id from server
 //        report.dirty = [NSNumber numberWithBool:NO];

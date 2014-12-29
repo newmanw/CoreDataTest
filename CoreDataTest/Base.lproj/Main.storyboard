@@ -28,6 +28,20 @@
                                     <action selector="saveToCoreData:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oUU-Go-bSJ"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="Report has not yet been sent to server" translatesAutoresizingMaskIntoConstraints="NO" id="ZZH-Sf-4zv">
+                                <rect key="frame" x="16" y="74" width="568" height="31"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="Document has not yet been sent to server" translatesAutoresizingMaskIntoConstraints="NO" id="2cM-nO-gFz">
+                                <rect key="frame" x="16" y="113" width="568" height="33"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -35,6 +49,10 @@
                             <constraint firstItem="OwC-2T-iIN" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16" id="isi-fI-BAR"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="documentLabel" destination="2cM-nO-gFz" id="IXg-1O-RpK"/>
+                        <outlet property="reportLabel" destination="ZZH-Sf-4zv" id="4Bu-9S-NJH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
