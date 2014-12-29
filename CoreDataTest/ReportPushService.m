@@ -5,6 +5,7 @@
 
 #import "ReportPushService.h"
 #import "Report.h"
+#import <AFNetworking/AFNetworking.h>
 
 @interface ReportPushService () <NSFetchedResultsControllerDelegate>
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
@@ -48,15 +49,27 @@
 
 - (void) pushReport:(Report *) report {
     __weak ReportPushService *weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [NSThread sleepForTimeInterval:.5];  // simulate server
-        report.remoteId = @"12345";
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:@"http://echo.jsontest.com/" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        report.remoteId = @"12345"; // fake id from server
         report.dirty = [NSNumber numberWithBool:NO];
         
         [weakSelf.managedObjectContext MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
             NSLog(@"Saved server info to Report");
         }];
-    });
+     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+         NSLog(@"Error: %@", error);
+     }];
+    
+//    [self.managedObjectContext performBlock:^{
+//        report.remoteId = @"12345"; // fake id from server
+//        report.dirty = [NSNumber numberWithBool:NO];
+//        
+//        [weakSelf.managedObjectContext MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
+//            NSLog(@"Saved server info to Report");
+//        }];
+//    }];
 }
 
 @end

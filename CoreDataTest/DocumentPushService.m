@@ -5,6 +5,7 @@
 
 #import "DocumentPushService.h"
 #import "Document.h"
+#import <AFNetworking/AFNetworking.h>
 
 @interface DocumentPushService () <NSFetchedResultsControllerDelegate>
 @property (nonatomic, readonly) NSManagedObjectContext *managedObjectContext;
@@ -50,15 +51,17 @@
 
 - (void) pushDocument:(Document *) document {
     __weak DocumentPushService *weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [NSThread sleepForTimeInterval:.5];  // simulate server
-        document.remoteId = @"6789";
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:@"http://echo.jsontest.com/" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        document.remoteId = @"12345"; // fake id from server
         document.dirty = [NSNumber numberWithBool:NO];
         
         [weakSelf.managedObjectContext MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
             NSLog(@"Saved server info to Document");
         }];
-    });
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
 }
 
 @end

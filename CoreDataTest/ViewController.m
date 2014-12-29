@@ -29,12 +29,12 @@
     report.dirty = [NSNumber numberWithBool:YES];
     report.timestamp = [NSDate date];
     
-    Document *document = [Document MR_createInContext:context];
-    document.dirty = [NSNumber numberWithBool:YES];
-    document.timestamp = [NSDate date];
-    document.report = report;
-    
-    [report addDocumentsObject:document];
+//    Document *document = [Document MR_createInContext:context];
+//    document.dirty = [NSNumber numberWithBool:YES];
+//    document.timestamp = [NSDate date];
+//    document.report = report;
+//    
+//    [report addDocumentsObject:document];
     
     NSLog(@"Saving.................................");
     [context MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
